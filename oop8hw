@@ -1,0 +1,56 @@
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor
+import random
+
+'''✅ Step 1 – Create a Printing Function'''
+
+
+# 1-Write a function called print_sequence(name, count):
+def print_sequence(name, count):
+    for i in range(count):
+        print(f"Thread {name}: i={i}")
+        time.sleep(0.3)
+
+
+# 2-Create 3 separate threads that run the function with different names and values:
+t1 = threading.Thread(target=print_sequence, args=("Alpha", 5))
+t2 = threading.Thread(target=print_sequence, args=("Beta", 3))
+t3 = threading.Thread(target=print_sequence, args=("Gamma", 4))
+
+# 3-Start all threads and wait for them to finish (join)
+t1.start()
+t2.start()
+t3.start()
+
+t1.join()
+t2.join()
+t3.join()
+
+'''🔄 Step 2 – Thread Pool'''
+# 4-Reuse the same print_sequence function, but this time use ThreadPoolExecutor:
+t = [
+    ("Alpha", 5),
+    ("Beta", 3),
+    ("Gamma", 4)
+]
+with ThreadPoolExecutor(max_workers=2) as executor:
+    for name, count in t:
+        executor.submit(print_sequence, name, count)
+
+'''🌟 Bonus – Dynamic Version'''
+# 5-In your main script:Create a list of 5 to 10 tuples with random names and values between 2 and 6
+# Run them all using ThreadPoolExecutor, and at the end print:"All threads completed!"
+
+tasks = []
+
+for i in range(random.randint(5, 10)):
+    name = f"-{i + 1}"
+    count = random.randint(2, 6)
+    tasks.append((name, count))
+
+with ThreadPoolExecutor(max_workers=2) as executor:
+    for name, count in tasks:
+        executor.submit(print_sequence, name, count)
+
+print("All threads completed!")
